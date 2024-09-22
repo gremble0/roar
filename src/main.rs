@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     fmt, io,
-    net::{TcpListener, TcpStream},
+    net::{SocketAddr, TcpListener, TcpStream},
 };
 
 struct Client {
@@ -11,53 +11,43 @@ struct Client {
 }
 
 impl Client {
-    fn new(stream: TcpStream) -> Client {
+    pub fn new(stream: TcpStream) -> Client {
         todo!()
     }
 
-    fn run() {
-        loop {}
+    pub fn run() {
+        todo!()
     }
 }
 
 struct Server {
-    clients: HashMap<String, Client>,
+    clients: HashMap<SocketAddr, Client>,
     listener: TcpListener,
 }
 
-#[derive(Debug)]
-pub enum ServerError {
-    BindError(io::Error),
-}
-
-impl fmt::Display for ServerError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ServerError::BindError(err) => write!(f, "Failed to bind to address: {}", err),
-        }
-    }
-}
-
 impl Server {
-    pub fn new(port: u16) -> Result<Server, ServerError> {
-        let listener = TcpListener::bind(format!("127.0.0.1:{}", port));
-
+    pub fn new(port: u16) -> Result<Server, io::Error> {
         Ok(Server {
             clients: HashMap::new(),
-            listener: listener.unwrap(), // TODO: LOL bad
+            listener: TcpListener::bind(format!("127.0.0.1:{}", port))?,
         })
     }
 
-    pub fn listen(&self) {
-        loop {}
+    pub fn listen(&mut self) {
+        loop {
+            match self.listener.accept() {
+                Ok((stream, addr)) => self.accept(stream, addr),
+                Err(err) => eprintln!("ERROR: could not accept connection: {}", err),
+            }
+        }
     }
 
-    fn accept(&self, new_stream: TcpStream) {
-        todo!()
+    fn accept(&mut self, stream: TcpStream, addr: SocketAddr) {
+        self.clients.insert(addr, Client::new(stream));
     }
 }
 
 fn main() {
-    let server = Server::new(1337).unwrap();
+    let mut server = Server::new(1337).unwrap();
     server.listen();
 }
