@@ -1,4 +1,5 @@
 use std::{
+    io::Result,
     iter::Map,
     net::{TcpListener, TcpStream},
 };
@@ -6,7 +7,15 @@ use std::{
 struct Client {
     read_buffer: Vec<u8>,
     username: String,
-    connection: bool, // idk the type here
+    connection: TcpStream,
+}
+
+impl Client {
+    fn new(stream: TcpStream) -> Client {}
+
+    fn run() {
+        loop {}
+    }
 }
 
 struct Server {
@@ -14,11 +23,27 @@ struct Server {
     listener: TcpListener,
 }
 
-fn handle_client(_stream: TcpStream) {
-    println!("Incoming connection")
+impl Server {
+    fn new() -> Server {}
+
+    fn listen() {
+        loop {}
+    }
+
+    fn accept(new_stream: TcpStream) {}
 }
 
-fn main() -> std::io::Result<()> {
+fn handle_client(stream: TcpStream) -> Client {
+    println!("Incoming connection");
+
+    Client {
+        read_buffer: Vec::new(),
+        username: String::new(),
+        connection: stream,
+    }
+}
+
+fn main() -> Result<()> {
     let listener = TcpListener::bind("127.0.0.1:1337")?;
 
     for stream in listener.incoming() {
