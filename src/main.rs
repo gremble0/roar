@@ -1,9 +1,8 @@
 use std::{
     collections::HashMap,
-    fmt, io,
+    io,
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{mpsc, Arc, Mutex},
-    thread,
 };
 
 struct Client {
